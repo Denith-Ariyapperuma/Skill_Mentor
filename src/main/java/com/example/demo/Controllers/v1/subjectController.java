@@ -1,47 +1,35 @@
 package com.example.demo.Controllers.v1;
 
+import com.example.demo.entities.Subject;
+import com.example.demo.services.Impl.SubjectServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import javax.security.auth.Subject;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/subjects")
-
+@AllArgsConstructor
 public class subjectController {
 
-    private final List<String> Subjects = new ArrayList<>(){{;
-        add("Math");
-        add("History");
-        add("English");
-    }};
+    private final SubjectServiceImpl subjectServiceImpl;
 
     @GetMapping
-    public String getSubjects(){
-        return Subjects.toString();
+    public List<Subject> getSubjects(){
+        return subjectServiceImpl.getAllSubjects();
     }
 
     @PostMapping
-    public String createSubject(@RequestBody String subject){
-        Subjects.add(subject);
-        return "Create a new subject:" +subject;
+    public Subject createSubject(@RequestBody Subject subject){
+        return subjectServiceImpl.createSubject(subject) ;
     }
 
-    @DeleteMapping
-    public String deleteSubject(@RequestBody String subject) {
-        Subjects.remove(subject);
-        return "Delete a subject successfully :" +subject;
+    @DeleteMapping({"id"})
+    public void deleteSubject(@PathVariable Long id) {
+        subjectServiceImpl.deleteSubject(id);
     }
 
-    @PutMapping({"index"})
-    public String updateSubject(@RequestBody String oldSubject, @RequestBody String newSubject) {
-        int index = Subjects.indexOf(oldSubject);
-        if (index != -1) {
-            Subjects.set(index, newSubject);
-            return "Update an existing subject: " +newSubject;
-        } else {
-            return "Subject not found:" +oldSubject;
-        }
+    @PutMapping({"id"})
+    public Subject updateSubject(@PathVariable Long id, @RequestBody Subject updatedSubject){
+        return subjectServiceImpl.updateSubjectById(id, updatedSubject);
     }
 }
