@@ -13,7 +13,7 @@ public class Subject {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 20)
+    @Column(name = "name", nullable = false, length = 20 , unique = true)
     private String subjectName;
 
     @Column(nullable = false,name = "description",length = 100)
