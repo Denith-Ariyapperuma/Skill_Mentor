@@ -24,5 +24,4 @@ public class Subject {
 
     @Column(name = "updated_at", nullable = false, updatable = false)
     private Date updatedAt;
-    /// sdfkshfiufi
 }
