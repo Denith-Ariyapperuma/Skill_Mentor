@@ -5,40 +5,49 @@ import com.example.demo.entities.Subject;
 import com.example.demo.services.Impl.SubjectServiceImpl;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/subjects")
 @AllArgsConstructor
-public class subjectController {
+public class subjectController extends AbstractController {
 
     private final SubjectServiceImpl subjectServiceImpl;
     private final ModelMapper modelMapper;
 
     @GetMapping
-    public List<Subject> getSubjects(){
-        return subjectServiceImpl.getAllSubjects();
+    public ResponseEntity<Page<Subject>> getSubjects(Pageable pageable){
+        Page<Subject> subjects = subjectServiceImpl.getAllSubjects(pageable);
+        return sendOkResponse(subjects);
     }
 
     @GetMapping({"{id}"})
-    public Subject getSubjectById(@PathVariable Long id){
-        return subjectServiceImpl.getSubjectById(id);
+    public ResponseEntity<Subject> getSubjectById(@PathVariable Long id){
+        Subject subject = subjectServiceImpl.getSubjectById(id);
+        return sendOkResponse(subject);
     }
 
     @PostMapping
-    public Subject createSubject(@RequestBody SubjectDTO subject){
-        Subject subjectnew = modelMapper.map(subject, Subject.class);
-        return subjectServiceImpl.createSubject(subjectnew);
+    public ResponseEntity<Subject> createSubject(@RequestBody SubjectDTO subject){
+        Subject subjectNew = modelMapper.map(subject, Subject.class);
+        Subject createdSubject = subjectServiceImpl.createSubject(subjectNew);
+        return sendCreatedResponse(createdSubject);
     }
 
     @DeleteMapping({"{id}"})
-    public void deleteSubject(@PathVariable Long id) {
+    public ResponseEntity<Subject> deleteSubject(@PathVariable Long id) {
         subjectServiceImpl.deleteSubject(id);
+        return sendNoContentResponse();
     }
 
     @PutMapping({"{id}"})
-    public Subject updateSubject(@PathVariable Long id, @RequestBody Subject updatedSubject){
-        return subjectServiceImpl.updateSubjectById(id, updatedSubject);
+    public ResponseEntity<Subject> updateSubject(@PathVariable Long id, @RequestBody Subject updatedSubject){
+        return sendOkResponse(subjectServiceImpl.updateSubjectById(id, updatedSubject));
     }
 }
